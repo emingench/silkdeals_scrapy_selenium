@@ -12,7 +12,7 @@ class ComputerdealsSpider(scrapy.Spider):
     def start_requests(self):
         yield SeleniumRequest(
             url='https://slickdeals.net/computer-deals/',
-            wait_time=3,
+            wait_time=5,
             callback=self.parse
         )
 
@@ -20,9 +20,9 @@ class ComputerdealsSpider(scrapy.Spider):
         products = response.xpath("//ul[@class='dealTiles categoryGridDeals']/li")
         for product in products:
             yield {
-                'name': product.xpath(".//a[@class='itemTitle']/text()").get(),
-                'link': product.xpath(".//a[@class='itemTitle']/@href").get(),
-                'store_name': self.remove_characters(product.xpath("normalize-space(.//span[@class='itemStore']/text())").get()),
+                'name': product.xpath(".//a[@class='itemTitle bp-p-dealLink bp-c-link']/text()").get(),
+                'link': product.xpath(".//a[@class='itemTitle bp-p-dealLink bp-c-link']/@href").get(),
+                'store_name': self.remove_characters(product.xpath("normalize-space(.//span[@class='blueprint']/a/text())").get()),
                 'price': product.xpath("normalize-space(.//div[@class='itemPrice  wide ']/text())").get()
             }
 
@@ -31,6 +31,6 @@ class ComputerdealsSpider(scrapy.Spider):
             absolute_url = f"https://slickdeals.net{next_page}"
             yield SeleniumRequest(
                 url=absolute_url,
-                wait_time=3,
+                wait_time=5,
                 callback=self.parse
             )
